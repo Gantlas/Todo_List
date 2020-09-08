@@ -7,34 +7,38 @@
     <title>Todo List</title>
   </head>
   <body>
+    <div id="bg"></div>
     <main class="main">
       <section class="todo">
         <h2 class="header">To Do</h2>
         <ul class="todo__list">
-          <li class="todo__item">dwadwadwa</li>
+          <li class="list__item">
+            <h3 class="item__title">Title</h3>
+            <p class="item__description">
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Placeat,
+              ducimus! Eligendi distinctio ab magnam, ratione ea perspiciatis
+              natus blanditiis laudantium.
+            </p>
+            <div class="icon-wrapper">
+              <img class="icon" src="images/arrow.svg" alt="arrow" />
+              <img class="icon" src="images/pencil.svg" alt="pencil" />
+              <img class="icon" src="images/trash.svg" alt="basket" />
+            </div>
+          </li>
         </ul>
-        <button class="add-btn">&#10010; Add another card</button>
+        <p class="add-card">&#10010; Add another card</p>
       </section>
       <section class="in-progress">
         <h2 class="header">In Progress</h2>
-        <ul class="in-progress__list">
-          <li class="in-progress__item">dwadwadwa</li>
-        </ul>
-        <button class="add-btn">&#10010; Add another card</button>
+        <ul class="in-progress__list"></ul>
       </section>
       <section class="done">
         <h2 class="header">Done</h2>
-        <ul class="done__list">
-          <li class="done__item">dwadwadwa</li>
-        </ul>
-        <button class="add-btn">&#10010; Add another card</button>
+        <ul class="done__list"></ul>
       </section>
       <section class="deleted">
         <h2 class="header">Deleted</h2>
-        <ul class="deleted__list">
-          <li class="deleted__item">dwadwadwa</li>
-        </ul>
-        <button class="add-btn">&#10010; Add another card</button>
+        <ul class="deleted__list"></ul>
       </section>
     </main>
     <script src="index.js"></script>
