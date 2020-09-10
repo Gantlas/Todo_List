@@ -76,7 +76,7 @@ body {
 .item__description {
   font-size: 16px;
   margin-bottom: 10px;
-  white-space: pre;
+  word-break: break-all;
 }
 
 .icon-wrapper {
