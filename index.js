@@ -8,6 +8,7 @@ const init = () => {
   const addCard = document.querySelector(".add-card");
   const listsArr = [...document.querySelectorAll(".list")];
   const form = document.querySelector(".create-form");
+  let currentValue = null;
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -25,13 +26,23 @@ const init = () => {
 
   listsArr.forEach((list) => {
     list.addEventListener("click", (event) => {
-      if (event.target.classList.contains("basket")) {
-        removeItem(data, event.target);
-      } else if (event.target.classList.contains("arrow")) {
-        transferItem(data, event.target);
-      } else if (event.target.classList.contains("pencil")) {
-        // transferItem(data, event.target);
-        editItem(data, event.target);
+      switch ((event, true)) {
+        case event.target.matches(".basket"):
+          removeItem(data, event.target);
+          break;
+        case event.target.matches(".arrow"):
+          transferItem(data, event.target);
+          break;
+        case event.target.matches(".pencil") &&
+          !document.querySelector(".edit-title"):
+          currentValue = showEditInputs(event.target);
+          break;
+        case event.target.matches("#edit"):
+          editItem(data, event.target, currentValue);
+          break;
+        case event.target.matches("#cancelEdit"):
+          displayList(data, event.target.closest(".list"));
+          break;
       }
     });
   });
@@ -121,9 +132,8 @@ const transferItem = (data, arrowNode) => {
   }
 };
 
-const editItem = (data, pencilNode) => {
+const showEditInputs = (pencilNode) => {
   const itemNode = pencilNode.closest(".list__item");
-  const listNode = itemNode.parentNode;
   const titleNode = itemNode.querySelector(".item__title");
   const descNode = itemNode.querySelector(".item__description");
   const title = titleNode.textContent;
@@ -131,29 +141,29 @@ const editItem = (data, pencilNode) => {
 
   itemNode.querySelector(".icon-wrapper").style.display = "none";
 
-  titleNode.innerHTML = `<input type="text" class="edit-title" placeholder="title" value="${titleNode.textContent}"/>`;
-  descNode.innerHTML = `<textarea class="edit-desc" cols="37" rows="5" placeholder="description">${descNode.textContent}</textarea>`;
+  titleNode.innerHTML = `<input type="text" class="edit-title" placeholder="title" value="${title}"/>`;
+  descNode.innerHTML = `<textarea class="edit-desc" cols="37" rows="5" placeholder="description">${desc}</textarea>`;
   itemNode.innerHTML += `
   <div class="btn-wrapper">
     <button id="edit">edit</button>
     <button id="cancelEdit">cancel</button>
   </div>`;
 
-  itemNode.addEventListener("click", (event) => {
-    if (event.target.matches("#edit")) {
-      const newTitle = itemNode.querySelector(".edit-title").value;
-      const newDesc = itemNode.querySelector(".edit-desc").value;
+  return { title: title, desc: desc };
+};
 
-      const editionIndex = data[listNode.id].findIndex((el) => {
-        return el.title === title && el.desc === desc;
-      });
+const editItem = (data, editBtnNode, currentValue) => {
+  const itemNode = editBtnNode.closest(".list__item");
+  const listNode = itemNode.parentNode;
+  const newTitle = itemNode.querySelector(".edit-title").value;
+  const newDesc = itemNode.querySelector(".edit-desc").value;
 
-      data[listNode.id][editionIndex] = { title: newTitle, desc: newDesc };
-      displayList(data, listNode);
-    } else if (event.target.matches("#cancelEdit")) {
-      displayList(data, listNode);
-    }
+  const editionIndex = data[listNode.id].findIndex((el) => {
+    return el.title === currentValue.title && el.desc === currentValue.desc;
   });
+
+  data[listNode.id][editionIndex] = { title: newTitle, desc: newDesc };
+  displayList(data, listNode);
 };
 
 init();
