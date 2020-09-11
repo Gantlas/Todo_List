@@ -5,54 +5,49 @@ const init = () => {
     done: [],
     deleted: [],
   };
-
   const addCard = document.querySelector(".add-card");
-  addCard.addEventListener("click", () => {
-    if (document.querySelector("#create")) {
-      return;
-    }
-    createItemForm(data);
+  const listsArr = [...document.querySelectorAll(".list")];
+  const form = document.querySelector(".create-form");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    createItem(data, form);
+    form.reset();
   });
 
-  const main = document.querySelector(".main");
-  main.addEventListener("click", (event) => {
-    if (event.target.classList.contains("basket")) {
-      removeItem(data, event.target);
-    } else if (event.target.classList.contains("arrow")) {
-      transferItem(data, event.target);
-    }
+  form.addEventListener("reset", () => {
+    form.style.display = "none";
+  });
+
+  addCard.addEventListener("click", () => {
+    form.style.display = "block";
+  });
+
+  listsArr.forEach((list) => {
+    list.addEventListener("click", (event) => {
+      if (event.target.classList.contains("basket")) {
+        removeItem(data, event.target);
+      } else if (event.target.classList.contains("arrow")) {
+        transferItem(data, event.target);
+      } else if (event.target.classList.contains("pencil")) {
+        // transferItem(data, event.target);
+        editItem(data, event.target);
+      }
+    });
   });
 };
 
-const createItemForm = (data) => {
+const createItem = (data, form) => {
   const toDoList = document.querySelector(".todo__list");
-  toDoList.innerHTML += `
-    <div class="create-wrapper">
-      <label for="title">Title:</label>
-      <input id="title" type="text" placeholder="title"/>
-      <label for="description">Description</label>
-      <textarea id="description" rows="5" cols="30" placeholder="description"></textarea>
-      <div class="btn-wrapper">
-        <button id="create">create</button>
-        <button id="cancel">cancel</button>
-      </div>
-    </div>`;
-  const titleInput = toDoList.querySelector("#title");
-  const descInput = toDoList.querySelector("#description");
-  const createBtn = toDoList.querySelector("#create");
-  const cancelBtn = toDoList.querySelector("#cancel");
+  const titleInput = form.querySelector("#title");
+  const descInput = form.querySelector("#description");
 
-  document.querySelector(".add-card").addEventListener("click", () => {});
-  createBtn.addEventListener("click", () => {
-    data.toDo.push({
-      title: titleInput.value,
-      desc: descInput.value,
-    });
-    displayList(data, toDoList);
+  data.toDo.push({
+    title: titleInput.value,
+    desc: descInput.value,
   });
-  cancelBtn.addEventListener("click", () => {
-    displayList(data, toDoList);
-  });
+
+  displayList(data, toDoList);
 };
 
 const displayList = (data, listNode) => {
@@ -93,9 +88,10 @@ const removeItem = (data, basketNode) => {
 };
 
 const transferItem = (data, arrowNode) => {
-  const currentList = arrowNode.closest(".list__item").parentNode;
-  const title = currentList.querySelector(".item__title").textContent;
-  const desc = currentList.querySelector(".item__description").textContent;
+  const currentItem = arrowNode.closest(".list__item");
+  const currentList = currentItem.parentNode;
+  const title = currentItem.querySelector(".item__title").textContent;
+  const desc = currentItem.querySelector(".item__description").textContent;
 
   let transferNode = null;
   switch (currentList.id) {
@@ -123,6 +119,41 @@ const transferItem = (data, arrowNode) => {
     displayList(data, currentList);
     displayList(data, transferNode);
   }
+};
+
+const editItem = (data, pencilNode) => {
+  const itemNode = pencilNode.closest(".list__item");
+  const listNode = itemNode.parentNode;
+  const titleNode = itemNode.querySelector(".item__title");
+  const descNode = itemNode.querySelector(".item__description");
+  const title = titleNode.textContent;
+  const desc = descNode.textContent;
+
+  itemNode.querySelector(".icon-wrapper").style.display = "none";
+
+  titleNode.innerHTML = `<input type="text" class="edit-title" placeholder="title" value="${titleNode.textContent}"/>`;
+  descNode.innerHTML = `<textarea class="edit-desc" cols="37" rows="5" placeholder="description">${descNode.textContent}</textarea>`;
+  itemNode.innerHTML += `
+  <div class="btn-wrapper">
+    <button id="edit">edit</button>
+    <button id="cancelEdit">cancel</button>
+  </div>`;
+
+  itemNode.addEventListener("click", (event) => {
+    if (event.target.matches("#edit")) {
+      const newTitle = itemNode.querySelector(".edit-title").value;
+      const newDesc = itemNode.querySelector(".edit-desc").value;
+
+      const editionIndex = data[listNode.id].findIndex((el) => {
+        return el.title === title && el.desc === desc;
+      });
+
+      data[listNode.id][editionIndex] = { title: newTitle, desc: newDesc };
+      displayList(data, listNode);
+    } else if (event.target.matches("#cancelEdit")) {
+      displayList(data, listNode);
+    }
+  });
 };
 
 init();

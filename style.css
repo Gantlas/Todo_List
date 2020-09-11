@@ -40,6 +40,9 @@ body {
   padding: 10px;
   background-color: rgb(231, 231, 231);
   color: rgb(61, 62, 136);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .header {
@@ -55,16 +58,22 @@ body {
 .deleted__list {
   list-style-type: none;
   padding: 0;
+  width: 100%;
 }
 
 .list__item,
-.create-wrapper {
+.create-form {
+  width: 100%;
   background-color: white;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
+}
+
+.create-form {
+  display: none;
 }
 
 .item__title {
@@ -94,6 +103,10 @@ body {
 .add-card {
   text-align: center;
   color: #696969;
+  font-size: 20px;
+  border: none;
+  outline: none;
+  background-color: inherit;
   cursor: pointer;
 }
 

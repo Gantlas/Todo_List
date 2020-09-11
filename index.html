@@ -11,7 +11,7 @@
     <main class="main">
       <section class="todo">
         <h2 class="header">To Do</h2>
-        <ul class="todo__list" id="toDo">
+        <ul class="todo__list list" id="toDo">
           <!-- <li class="list__item">
             <h3 class="item__title">Title</h3>
             <p class="item__description">
@@ -26,19 +26,34 @@
             </div>
           </li> -->
         </ul>
-        <p class="add-card">&#10010; Add another card</p>
+        <form class="create-form">
+          <label for="title">Title:</label>
+          <input id="title" type="text" placeholder="title" />
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            rows="5"
+            cols="30"
+            placeholder="description"
+          ></textarea>
+          <div class="btn-wrapper">
+            <button id="create" type="submit">create</button>
+            <button id="cancel" type="reset">cancel</button>
+          </div>
+        </form>
+        <button class="add-card">&#10010; Add another card</button>
       </section>
       <section class="in-progress">
         <h2 class="header">In Progress</h2>
-        <ul class="in-progress__list" id="inProgress"></ul>
+        <ul class="in-progress__list list" id="inProgress"></ul>
       </section>
       <section class="done">
         <h2 class="header">Done</h2>
-        <ul class="done__list" id="done"></ul>
+        <ul class="done__list list" id="done"></ul>
       </section>
       <section class="deleted">
         <h2 class="header">Deleted</h2>
-        <ul class="deleted__list" id="deleted"></ul>
+        <ul class="deleted__list list" id="deleted"></ul>
       </section>
     </main>
     <script src="index.js"></script>
