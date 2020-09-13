@@ -70,7 +70,7 @@ const displayList = (data, listNode) => {
     <div class="icon-wrapper">     
       ${
         listNode.id === "deleted"
-          ? ``
+          ? `<img class="icon arrow reverse"  src="images/arrow.svg" alt="arrow" />`
           : `<img class="icon arrow"  src="images/arrow.svg" alt="arrow" />
              <img class="icon pencil" src="images/pencil.svg" alt="pencil" />
              <img class="icon basket" src="images/trash.svg" alt="basket" />`
@@ -91,11 +91,7 @@ const removeItem = (data, basketNode) => {
     return el.title === title && el.desc === desc;
   });
 
-  data.deleted.push(data[listNode.id][removeIndex]);
-  data[listNode.id].splice(removeIndex, 1);
-
-  displayList(data, listNode);
-  displayList(data, deletedList);
+  commonFunction(data, listNode, deletedList, removeIndex);
 };
 
 const transferItem = (data, arrowNode) => {
@@ -115,6 +111,9 @@ const transferItem = (data, arrowNode) => {
     case "done":
       transferNode = document.querySelector("#deleted");
       break;
+    case "deleted":
+      transferNode = document.querySelector("#toDo");
+      break;
     default:
       transferNode = null;
   }
@@ -124,12 +123,16 @@ const transferItem = (data, arrowNode) => {
       return el.title === title && el.desc === desc;
     });
 
-    data[transferNode.id].push(data[currentList.id][currentItemIndex]);
-    data[currentList.id].splice(currentItemIndex, 1);
-
-    displayList(data, currentList);
-    displayList(data, transferNode);
+    commonFunction(data, currentList, transferNode, currentItemIndex);
   }
+};
+
+const commonFunction = (data, currentList, transferList, index) => {
+  data[transferList.id].push(data[currentList.id][index]);
+  data[currentList.id].splice(index, 1);
+
+  displayList(data, currentList);
+  displayList(data, transferList);
 };
 
 const showEditInputs = (pencilNode) => {

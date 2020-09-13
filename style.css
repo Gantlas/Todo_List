@@ -107,12 +107,17 @@ body {
   width: 100px;
   align-self: flex-end;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .icon {
   width: 25px;
+  margin: 0 5px;
   cursor: pointer;
+}
+
+.reverse {
+  transform: rotate(-90deg);
 }
 
 .add-card {
