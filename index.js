@@ -6,6 +6,7 @@ const init = () => {
     deleted: [],
   };
   const addCard = document.querySelector(".add-card");
+  const clearCard = document.querySelector(".clear-card");
   const listsArr = [...document.querySelectorAll(".list")];
   const form = document.querySelector(".create-form");
   let currentValue = null;
@@ -22,6 +23,11 @@ const init = () => {
 
   addCard.addEventListener("click", () => {
     form.style.display = "block";
+  });
+
+  clearCard.addEventListener("click", () => {
+    data.deleted = [];
+    displayList(data, listsArr[3]);
   });
 
   listsArr.forEach((list) => {
@@ -43,6 +49,73 @@ const init = () => {
         case event.target.matches("#cancelEdit"):
           displayList(data, event.target.closest(".list"));
           break;
+      }
+    });
+
+    list.addEventListener("mousedown", (event) => {
+      if (event.target.matches(".list__item")) {
+        const listItem = event.target.closest(".list__item");
+        const listItemWidth = getComputedStyle(listItem).width;
+
+        listItem.ondragstart = () => {
+          return false;
+        };
+
+        const shiftX = event.clientX - listItem.getBoundingClientRect().left;
+        const shiftY = event.clientY - listItem.getBoundingClientRect().top;
+
+        listItem.style.position = "fixed";
+        listItem.style.zIndex = 100;
+        listItem.style.width = listItemWidth;
+
+        const moveAt = (pageX, pageY) => {
+          listItem.style.left = pageX - shiftX + "px";
+          listItem.style.top = pageY - shiftY + "px";
+        };
+
+        let currentDroppable = null;
+
+        const onMouseMove = (event) => {
+          moveAt(event.pageX, event.pageY);
+
+          listItem.style.display = "none";
+          const elemBelow = document.elementFromPoint(
+            event.clientX,
+            event.clientY
+          );
+          listItem.style.display = "";
+
+          if (!elemBelow) return;
+
+          const droppableBelow = elemBelow.closest("section");
+          if (droppableBelow !== currentDroppable) {
+            if (currentDroppable) {
+              currentDroppable.style.borderColor = "";
+            }
+            currentDroppable = droppableBelow;
+            if (currentDroppable) {
+              currentDroppable.style.borderColor = "rgb(61, 62, 136)";
+            }
+          }
+        };
+
+        document.addEventListener("mousemove", onMouseMove);
+
+        listItem.onmouseup = () => {
+          if (currentDroppable) {
+            dropTransfer(
+              data,
+              listItem,
+              currentDroppable.querySelector(".list")
+            );
+            currentDroppable.style.borderColor = "";
+          } else {
+            displayList(data, listItem.closest(".list"));
+            listItem.remove();
+          }
+          document.removeEventListener("mousemove", onMouseMove);
+          listItem.onmouseup = null;
+        };
       }
     });
   });
@@ -167,6 +240,19 @@ const editItem = (data, editBtnNode, currentValue) => {
 
   data[listNode.id][editionIndex] = { title: newTitle, desc: newDesc };
   displayList(data, listNode);
+};
+
+const dropTransfer = (data, currentItemNode, transferListNode) => {
+  const currentListNode = currentItemNode.closest(".list");
+
+  const title = currentItemNode.querySelector(".item__title").textContent;
+  const desc = currentItemNode.querySelector(".item__description").textContent;
+
+  const currentItemIndex = data[currentListNode.id].findIndex((el) => {
+    return el.title === title && el.desc === desc;
+  });
+
+  commonFunction(data, currentListNode, transferListNode, currentItemIndex);
 };
 
 init();
