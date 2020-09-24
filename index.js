@@ -53,9 +53,14 @@ const init = () => {
     });
 
     list.addEventListener("mousedown", (event) => {
-      if (event.target.matches(".list__item")) {
+      if (
+        event.target.closest(".list__item") &&
+        !event.target.matches(".icon")
+      ) {
         const listItem = event.target.closest(".list__item");
         const listItemWidth = getComputedStyle(listItem).width;
+
+        if (listItem.querySelector("input")) return;
 
         listItem.ondragstart = () => {
           return false;
